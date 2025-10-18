@@ -33,7 +33,7 @@ L.marker([58.02396, -3.85812])
     );
 
 // Marker 3: The Library (NEW, non-overlapping coordinates)
-L.marker([58.01043944105685, -3.853799185858272]) // <--- Adjusted coordinates
+L.marker([58.01024, -3.85399]) // <--- Adjusted coordinates
     .addTo(map)
     .bindPopup(
         '<h3>The Library</h3>' +
