@@ -46,7 +46,7 @@ const broraPois = {
             "geometry": { "type": "Point", "coordinates": [-3.8523, 58.0123] },
             "properties": {
                 "title": "Welcome to Brora!",
-                "description": "",
+                "description": "Click the items for info & links, see the top right for an alternate 1888 map",
                 "open_popup": true,
                 "is_special": true 
             }
@@ -121,9 +121,42 @@ const broraPois = {
 		{ "text": "Some history of the distillery", "url": "https://www.wanderingspiritsglobal.com/clynelish-brora-distillery/" }
                 ]
             }
-        } 
+        },
+// Marker 7: Carn Liath Broch (Iron Age)
+        {
+            "type": "Feature",
+            "geometry": { 
+                "type": "Point", 
+                "coordinates": [-3.912052, 57.987215] 
+            },
+            "properties": {
+                "title": "Carn Liath Broch (Iron Age)",
+                "description": "A well-preserved Iron Age broch dating back over 2,000 years, managed by Historic Environment Scotland.",
+                "links": [
+                    { "text": "Wikipedia Page", "url": "https://en.wikipedia.org/wiki/Carn_Liath_(broch)" },
+                    { "text": "Historic Environment Scotland", "url": "https://www.historicenvironment.scot/visit-a-place/places/carn-liath-broch/" }
+                ]
+            }
+        },
+ // Marker 8: Dunrobin Castle (Stately Home)
+        {
+            "type": "Feature",
+            "geometry": { 
+                "type": "Point", 
+                "coordinates": [-3.945278, 57.981944] // Longitude then Latitude
+            },
+            "properties": {
+                "title": "Dunrobin Castle",
+                "description": "The stately home of the Earl of Sutherland, featuring spectacular French-style gardens and architecture dating back to the 13th century.",
+"image": "images/dunrobin.jpg",
+                "links": [
+                    { "text": "Official Castle Website", "url": "https://www.dunrobincastle.co.uk/" },
+                    { "text": "Wikipedia Page", "url": "https://en.wikipedia.org/wiki/Dunrobin_Castle" }
+                ]
+            }
+        }
     ] 
-}; 
+};
 
 
 // --- MARKER DISPLAY LOGIC (UPDATED FOR MULTIPLE LINKS) ---
