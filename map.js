@@ -40,14 +40,15 @@ osmLayer.addTo(map);
 const broraPois = {
     "type": "FeatureCollection",
     "features": [
-        // Marker 1: Welcome Center Point (NOTE: coordinates are [Lng, Lat])
+        // Marker 1: Welcome Center Point (NOW WITH CORRECT COMMA AND STYLING FLAG)
         {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-3.8523, 58.0123] },
             "properties": {
                 "title": "Welcome to Brora!",
-                "description": "",
-                "open_popup": true 
+                "description": "This is intended to be a historic community map, click the top right corner for an 1888 comparison",
+                "open_popup": true, // <-- COMMA IS ESSENTIAL HERE!
+                "is_special": true 
             }
         },
         // Marker 2: The New Heritage & The Old School
@@ -81,36 +82,51 @@ const broraPois = {
                 "description": "The Golf Course Established in 1891 (the text was corrected from 1981).",
                 "link": "https://www.broragolfclub.co.uk/"
             }
-        }, // <-- FIX: Comma added here
+        }, 
         // Marker 5: Brora Rangers
         {
             "type": "Feature",
             "geometry": { 
                 "type": "Point", 
-                "coordinates": [-3.859770436527265, 58.008314929833396] // NOTE: Correct Lng/Lat order
+                "coordinates": [-3.859770436527265, 58.008314929833396] 
             },
-            "properties": { // <-- FIX: Properties object correctly defined
+            "properties": { 
                 "title": "Brora Rangers - Founded in 1879",
                 "description": "Dundgeon Park, home to Brora Rangers.",
                 "image": "images/BR_logo.png", 
                 "link": "https://brorarangers.football/"
-            } // <-- FIX: Feature object correctly closed
+            } 
         }
-    ] // <-- GeoJSON features array closes correctly
-}; // <-- GeoJSON object closes correctly
+    ] 
+}; 
 
 
-// --- MARKER DISPLAY LOGIC ---
+// --- MARKER DISPLAY LOGIC (Handles the custom red icon) ---
 
-// Create a feature group to hold your markers (this acts as the overlay layer)
 const markerGroup = L.featureGroup();
 
 L.geoJSON(broraPois, {
-    // This function runs once for every point in the GeoJSON data
+    // 1. pointToLayer is used for custom icon logic
+    pointToLayer: function (feature, latlng) {
+        if (feature.properties.is_special) {
+            // Create a custom red icon for the Welcome marker
+            const redIcon = L.AwesomeMarkers.icon({
+                icon: 'home', 
+                markerColor: 'red',
+                prefix: 'fa' 
+            });
+            // Return the custom marker
+            return L.marker(latlng, {icon: redIcon});
+        }
+        // For all other markers, return the default Leaflet marker (blue)
+        return L.marker(latlng);
+    },
+
+    // 2. onEachFeature is used for popup logic
     onEachFeature: function(feature, layer) {
         const props = feature.properties;
         
-        // 1. Build the Popup Content using Template Literals (backticks)
+        // Build the Popup Content
         let popupContent = `
             <h3>${props.title}</h3>
             ${props.description ? `<p>${props.description}</p>` : ''}
@@ -118,10 +134,8 @@ L.geoJSON(broraPois, {
             ${props.link ? `<p><a href="${props.link}" target="_blank">Visit their website</a></p>` : ''}
         `;
 
-        // 2. Bind the popup to the marker
+        // Bind and open popup if necessary
         layer.bindPopup(popupContent);
-        
-        // 3. Check for the custom 'open_popup' property and open it
         if (props.open_popup) {
             layer.openPopup();
         }
@@ -130,14 +144,10 @@ L.geoJSON(broraPois, {
 
 
 // --- LAYER CONTROL ---
-
-// Add the entire marker group to the map (as an Overlay)
 markerGroup.addTo(map);
 
-// Define an object to hold your overlays for the control box
 const overlayLayers = {
     "Points of Interest": markerGroup
 };
 
-// Add the control to the map
 L.control.layers(baseLayers, overlayLayers).addTo(map);
