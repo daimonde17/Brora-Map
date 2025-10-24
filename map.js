@@ -40,26 +40,28 @@ osmLayer.addTo(map);
 const broraPois = {
     "type": "FeatureCollection",
     "features": [
-        // Marker 1: Welcome Center Point (NOW WITH CORRECT COMMA AND STYLING FLAG)
+        // Marker 1: Welcome Center Point 
         {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-3.8523, 58.0123] },
             "properties": {
                 "title": "Welcome to Brora!",
-                "description": "This is intended to be a historic community map, click the top right corner for an 1888 comparison",
-                "open_popup": true, // <-- COMMA IS ESSENTIAL HERE!
+                "description": "",
+                "open_popup": true,
                 "is_special": true 
             }
         },
-        // Marker 2: The New Heritage & The Old School
+        // Marker 2: The New Heritage Centre & The Old School
         {
             "type": "Feature",
             "geometry": { "type": "Point", "coordinates": [-3.85812, 58.02396] },
             "properties": {
-                "title": "The New Heritage & The Old School",
+                "title": "The New Heritage Centre & The Old School",
                 "description": "This building now houses the Brora Heritage Centre, showcasing local history and artifacts.",
-                "image": "https://via.placeholder.com/200x150",
-                "link": "https://www.broraheritage.com/"
+                "image": "images/broraheritagelogo.jpg",
+                "links": [ 
+                    { "text": "Visit their website", "url": "https://www.broraheritage.com/" }
+                ]
             }
         },
         // Marker 3: The Library
@@ -70,7 +72,9 @@ const broraPois = {
                 "title": "The Library",
                 "description": "The current library, this was built as a drill hall before the first world war. In 1914 the building was drill station for \"F\" Squadron, 2nd Lovat's Scouts and base for \"D\" Company, 5th battalion, Seaforth Highlanders.",
                 "image": "images/lib.jpg",
-                "link": "https://www.highlifehighland.com/libraries/brora-library-and-cultural-centre/"
+                "links": [ 
+                    { "text": "Visit their website", "url": "https://www.highlifehighland.com/libraries/brora-library-and-cultural-centre/" }
+                ]
             }
         },
         // Marker 4: The Golf Course
@@ -79,8 +83,10 @@ const broraPois = {
             "geometry": { "type": "Point", "coordinates": [-3.84473002055259, 58.01218137148599] },
             "properties": {
                 "title": "The Golf Course",
-                "description": "The Golf Course Established in 1891 (the text was corrected from 1981).",
-                "link": "https://www.broragolfclub.co.uk/"
+                "description": "The Golf Course Established in 1891.",
+                "links": [ 
+                    { "text": "Go to Golf Club Website", "url": "https://www.broragolfclub.co.uk/" }
+                ]
             }
         }, 
         // Marker 5: Brora Rangers
@@ -94,14 +100,33 @@ const broraPois = {
                 "title": "Brora Rangers - Founded in 1879",
                 "description": "Dundgeon Park, home to Brora Rangers.",
                 "image": "images/BR_logo.png", 
-                "link": "https://brorarangers.football/"
+                "links": [ 
+                    { "text": "Go to Club Website", "url": "https://brorarangers.football/" }
+                ]
             } 
-        }
+        },
+        // Marker 6: Clynelish Distillery - WITH MULTIPLE LINKS
+        {
+            "type": "Feature",
+            "geometry": { 
+                "type": "Point", 
+                "coordinates": [-3.868194, 58.023816] 
+            },
+            "properties": {
+                "title": "Clynelish Distillery",
+                "description": "Known as the 'Highland Home of Johnnie Walker,' famous for its waxy, fruity single malt.",
+                "links": [ // <-- NEW LINKS ARRAY
+                    { "text": "Official Distillery Site", "url": "https://www.malts.com/en-gb/distilleries/clynelish" },
+                    { "text": "Wikipedia Page", "url": "https://en.wikipedia.org/wiki/Clynelish_distillery" },
+		{ "text": "Some history of the distillery", "url": "https://www.wanderingspiritsglobal.com/clynelish-brora-distillery/" }
+                ]
+            }
+        } 
     ] 
 }; 
 
 
-// --- MARKER DISPLAY LOGIC (Handles the custom red icon) ---
+// --- MARKER DISPLAY LOGIC (UPDATED FOR MULTIPLE LINKS) ---
 
 const markerGroup = L.featureGroup();
 
@@ -126,12 +151,21 @@ L.geoJSON(broraPois, {
     onEachFeature: function(feature, layer) {
         const props = feature.properties;
         
+        // ** NEW LINK LOGIC **
+        let linksHTML = '';
+        if (props.links && Array.isArray(props.links)) {
+            // Loop through each object in the 'links' array and create an anchor tag
+            linksHTML = props.links.map(link => 
+                `<p><a href="${link.url}" target="_blank">${link.text}</a></p>`
+            ).join(''); // Joins the list of HTML strings into one block
+        }
+        
         // Build the Popup Content
         let popupContent = `
             <h3>${props.title}</h3>
             ${props.description ? `<p>${props.description}</p>` : ''}
             ${props.image ? `<img src="${props.image}" alt="${props.title}" style="width:100%; height:auto; margin-bottom: 5px;">` : ''}
-            ${props.link ? `<p><a href="${props.link}" target="_blank">Visit their website</a></p>` : ''}
+            ${linksHTML}
         `;
 
         // Bind and open popup if necessary
