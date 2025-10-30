@@ -5,25 +5,28 @@
     <title>Brora Map Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <style>
-      /* 2. ESSENTIAL: CSS to give the map container a height */
-      #map {position: absolute; top: 0; right: 0; bottom: 0; left: 0;}
-    </style>
+    <link rel="stylesheet" href="style.css" /> 
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet.awesome-markers@2.0.5/dist/leaflet.awesome-markers.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
   </head>
   <body>
+    
+    <div id="intro-box">
+      <button id="close-intro" aria-label="Close introduction">×</button>
+      <h1>Welcome to the Brora Heritage Map!</h1>
+      <p>Explore the history and landmarks of Brora and the surrounding Sutherland area.</p>
+<p> You can zoom in and out to see more of the map & more markers. </p>
+      <p>Click on the markers to learn more about each location.</p>
+<p>Look to the top right to select a different map, at the moment we have a modern day & this 1888 map. </p>
+    </div>
     <div id="map">
       <p style="position:fixed; left:10px; bottom:10px; z-index:999;"><a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">&copy; OpenStreetMap contributors</a></p>
     </div>
     
+    <!-- LOAD SCRIPTS IN THE CORRECT ORDER -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="https://unpkg.com/leaflet.awesome-markers@2.0.5/dist/leaflet.awesome-markers.min.js"></script>
-    
     <script src="map.js"></script> 
-    
   </body>
 </html>
