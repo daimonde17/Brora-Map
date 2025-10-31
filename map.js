@@ -181,8 +181,15 @@ const maptilerLayer = L.tileLayer(`https://api.maptiler.com/tiles/uk-osgb10k1888
     tileSize: 512,
     zoomOffset: -1,
     minZoom: 1,
-    attribution: "\u003ca href=\"https://www.maptiler.com/copyright/\" target=\"_blank\"\u003e\u0026copy; MapTiler\u003c/a\u003e \u003ca href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\"\u003e\u0026copy; OpenStreetMap contributors\u003c/a\u003e",
+    attribution: "&copy; <a href='https://www.maptiler.com/copyright/' target='_blank'>MapTiler</a> &copy; <a href='https://www.nls.uk/copyright/' target='_blank'>National Library of Scotland</a> &copy; <a href='https://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap contributors</a>",
     crossOrigin: true
+});
+// Add this new layer to your map.js (keep your existing layers)
+const nls25inchLayer = L.tileLayer('https://mapseries-tilesets.s3.amazonaws.com/25_inch/scotland_2/{z}/{x}/{y}.png', {
+    minZoom: 10,
+    maxZoom: 18,
+    attribution: '&copy; National Library of Scotland',
+    bounds: [[54.5, -6.5], [61.5, -0.5]] // Covers all of Scotland
 });
 
 // 2. OpenStreetMap Standard Layer (Modern reference)
@@ -192,9 +199,13 @@ const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 });
 
 const baseLayers = {
+    "25-inch Historical (NLS)": nls25inchLayer,
     "Historical (MapTiler 1888)": maptilerLayer,
     "Modern (OpenStreetMap)": osmLayer 
 };
+
+// Start with the new 25-inch map as default
+nls25inchLayer.addTo(map);
 
 // Start the map with the 1888 layer
 maptilerLayer.addTo(map); 
