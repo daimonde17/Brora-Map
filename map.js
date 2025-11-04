@@ -162,9 +162,36 @@ const broraPois = {
 { "text": "It is now a less secretive Caravan Park", "url": "https://www.campingandcaravanningclub.co.uk/campsites/uk/highland/sutherland/seabreezescaravanpark/" }
         ]
     }
+},
+{
+    "type": "Feature", 
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+            [-3.86643, 58.01176],  // North 
+            [-3.86532, 58.01141],  // East 
+            [-3.86620, 58.01106],  // South
+            [-3.86745, 58.01137],  // west
+            [-3.86643, 58.01176]   // Close the polygon
+        ]]
+    },
+    "properties": {
+        "title": "Brora Brick and Tile Works 🧱",
+        "description": "The brickyard at Brora started in 1814, closed in 1826, re-opened in 1873, and was taken over by the tweed firm, Hunters, in 1914. They ceased operations in 1949, but the brickyard did not close until the 1970s.",
+        "color": "#8B0000",      // Brick red
+        "fillOpacity": 0.25,     // Light transparency
+        "stroke": true,
+        "color": "#8B0000",
+        "strokeColor": "#8B0000", // Brick red border (changed from just "color")
+        "weight": 2,
+        "links": [
+            { "text": "Scottish Brick History", "url": "https://www.scottishbrickhistory.co.uk/brora-brick-and-tile-works-brora-sutherland/" }
+        ]
+    }
 }
     ] 
 };
+
 
 // --- ERROR CHECKING ---
 console.log("Map script loaded");
@@ -215,40 +242,53 @@ maptilerLayer.addTo(map);
 const markerGroup = L.featureGroup().addTo(map); // Add to map immediately
 
 L.geoJSON(broraPois, {
-    // 1. pointToLayer is used for custom icon logic
+    // 1. pointToLayer is used for custom icon logic (for Points only)
     pointToLayer: function (feature, latlng) {
-        if (feature.properties.is_special) {
-            // Create a custom red icon for the Welcome marker
-            const redIcon = L.AwesomeMarkers.icon({
-                icon: 'home', 
-                markerColor: 'red',
-                prefix: 'fa' 
+        if (feature.geometry.type === 'Point') {
+            if (feature.properties.is_special) {
+                const redIcon = L.AwesomeMarkers.icon({
+                    icon: 'home', 
+                    markerColor: 'red',
+                    prefix: 'fa' 
+                });
+                return L.marker(latlng, {icon: redIcon});
+            }
+            const blueIcon = L.AwesomeMarkers.icon({
+                markerColor: 'blue',
+                prefix: 'fa'
             });
-            // Return the custom marker
-            return L.marker(latlng, {icon: redIcon});
+            return L.marker(latlng, {icon: blueIcon});
         }
-        // For all other markers, use blue awesome markers
-        const blueIcon = L.AwesomeMarkers.icon({
-            markerColor: 'blue',
-            prefix: 'fa'
-        });
-        return L.marker(latlng, {icon: blueIcon});
+        // For non-Point geometries, return null (they'll be handled by style function)
+        return null;
     },
 
-    // 2. onEachFeature is used for popup logic
+    // 2. ADD THIS NEW STYLE FUNCTION for Polygons
+    style: function(feature) {
+        if (feature.geometry.type === 'Polygon') {
+            return {
+                fillColor: feature.properties.color || '#3388ff', // Use custom color or default blue
+                fillOpacity: feature.properties.fillOpacity || 0.2,
+                color: feature.properties.strokeColor || feature.properties.color || '#3388ff',
+                weight: feature.properties.weight || 2,
+                opacity: feature.properties.opacity || 1.0
+            };
+        }
+        // For points, return empty object (use default styles)
+        return {};
+    },
+
+    // 3. onEachFeature is used for popup logic (same as before)
     onEachFeature: function(feature, layer) {
         const props = feature.properties;
         
-        // This logic handles the new 'links' array to build the link HTML
         let linksHTML = '';
         if (props.links && Array.isArray(props.links)) {
-            // Loop through each object in the 'links' array and create an anchor tag
             linksHTML = props.links.map(link => 
                 `<p><a href="${link.url}" target="_blank">${link.text}</a></p>`
-            ).join(''); // Joins the list of HTML strings into one block
+            ).join('');
         }
         
-        // Build the Popup Content
         let popupContent = `
             <h3>${props.title}</h3>
             ${props.description ? `<p>${props.description}</p>` : ''}
@@ -256,16 +296,14 @@ L.geoJSON(broraPois, {
             ${linksHTML}
         `;
 
-        // Bind and open popup if necessary
         layer.bindPopup(popupContent);
         if (props.open_popup) {
-            // Use setTimeout to ensure the popup opens after the map is fully loaded
             setTimeout(() => {
                 layer.openPopup();
             }, 500);
         }
     }
-}).addTo(markerGroup); // Add the GeoJSON layer to the markerGroup
+}).addTo(markerGroup);
 
 // --- LAYER CONTROL ---
 const overlayLayers = {
